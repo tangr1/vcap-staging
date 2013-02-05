@@ -118,10 +118,16 @@ class StagingPlugin
     @source_directory = File.expand_path(source_directory)
     @destination_directory = File.expand_path(destination_directory)
     @environment = environment
+    @container_klass = setup_container("jetty")
     # Drop privs before staging
     # res == real, effective, saved
     @staging_gid = gid.to_i if gid
     @staging_uid = uid.to_i if uid
+  end
+
+  def setup_container(name)
+    require File.expand_path("../containers/#{name}/#{name}", __FILE__)
+    Object.const_get(name.capitalize)
   end
 
   def logger
